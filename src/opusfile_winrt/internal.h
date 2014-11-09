@@ -84,4 +84,18 @@ Windows::Storage::Streams::IBuffer^ pack_sample(const opus_int16 *pcm, int size)
 }
 
 
+template<typename _Ty>
+static
+typename concurrency::details::_TaskTypeFromParam<_Ty>::_Type perform_synchronously(_Ty param)
+{
+	concurrency::task<typename concurrency::details::_TaskTypeFromParam<_Ty>::_Type> task = concurrency::create_task(param);
+	concurrency::event synchronizer;
+	task.then([&](typename concurrency::details::_TaskTypeFromParam<_Ty>::_Type) {
+		synchronizer.set();
+	}, concurrency::task_continuation_context::use_arbitrary());
+	synchronizer.wait();
+	return task.get();
+}
+
+
 #endif

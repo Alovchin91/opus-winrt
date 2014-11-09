@@ -318,7 +318,7 @@ namespace Opusfile {
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
 			assert(instance && instance->file_reader_);
 			if (nbytes > 0) {
-				unsigned count = concurrency::create_task(instance->file_reader_->LoadAsync(nbytes)).get();
+				unsigned count = perform_synchronously(instance->file_reader_->LoadAsync(nbytes));
 				if (count > 0) {
 					instance->file_reader_->ReadBytes(Platform::ArrayReference<uint8>(reinterpret_cast<uint8 *>(ptr), count));
 					return count;
