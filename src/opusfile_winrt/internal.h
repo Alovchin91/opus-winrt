@@ -38,7 +38,7 @@
 
 
 /* get internal IBuffer array */
-static inline
+static
 uint8 *get_array(Windows::Storage::Streams::IBuffer^ buffer)
 {
 	IInspectable *inspectable = reinterpret_cast<IInspectable *>(buffer);
@@ -51,7 +51,7 @@ uint8 *get_array(Windows::Storage::Streams::IBuffer^ buffer)
 
 
 /* convert UTF-8 to String */
-static inline
+static
 Platform::String^ string_from_utf8(const char *str, int len = -1)
 {
 	if (!str) return nullptr;
@@ -68,7 +68,7 @@ Platform::String^ string_from_utf8(const char *str, int len = -1)
 
 
 /* convert int16 array to IBuffer */
-static inline
+static
 Windows::Storage::Streams::IBuffer^ pack_sample(const opus_int16 *pcm, int size)
 {
 	Windows::Storage::Streams::IBuffer^ buffer = ref new Windows::Storage::Streams::Buffer((unsigned)size * 2);

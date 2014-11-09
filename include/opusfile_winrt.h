@@ -102,11 +102,16 @@ namespace Opusfile {
 		internal:
 			OpusTags(const ::OpusTags *src) : src_(src) { }
 
+			char *GetComment(int index) const {
+				if (index < 0 || index > src_->comments) return nullptr;
+				return src_->user_comments[index];
+			}
+
 		private:
 			inline Platform::Array<Platform::String^>^ InitializeUserComments() {
 				Platform::Array<Platform::String^>^ arr = ref new Platform::Array<Platform::String^>((unsigned)src_->comments);
 				for (unsigned i = 0; i < arr->Length; i++) {
-					arr[i] = string_from_utf8(src_->user_comments[i], src_->comment_lengths[i]);
+					arr[i] = string_from_utf8(src_->user_comments[i], src_->comment_lengths[i] + 1);
 				}
 				return arr;
 			}
@@ -115,6 +120,106 @@ namespace Opusfile {
 
 			Platform::String^ vendor_;
 			Platform::Array<Platform::String^>^ user_comments_;
+		};
+
+
+		public enum struct OpusPictureType {
+			Other,
+			FileIcon32x32,
+			FileIconOther,
+			CoverFront,
+			CoverBack,
+			LeafletPage,
+			Media,
+			LeadArtist,
+			Artist,
+			Conductor,
+			Band,
+			Composer,
+			Lyricist,
+			RecordingLocation,
+			DuringRecording,
+			DuringPerformance,
+			ScreenCapture,
+			BrightColoredFish,
+			Illustration,
+			ArtistLogotype,
+			PublisherLogotype
+		};
+
+
+		public enum struct OpusPictureFormat {
+			Unknown = OP_PIC_FORMAT_UNKNOWN,
+			Url = OP_PIC_FORMAT_URL,
+			Jpeg = OP_PIC_FORMAT_JPEG,
+			Png = OP_PIC_FORMAT_PNG,
+			Gif = OP_PIC_FORMAT_GIF
+		};
+
+
+		public ref class OpusPictureTag sealed {
+		public:
+			virtual ~OpusPictureTag()
+			{
+				::opus_picture_tag_clear(src_);
+				delete src_;
+			}
+
+			static Platform::Array<OpusPictureTag^>^ Parse(OpusTags^ opusTags);
+
+			property OpusPictureType Type {
+				OpusPictureType get() { return (OpusPictureType)(src_->type > 20 ? 0 : src_->type); }
+			}
+
+			property Platform::String^ MimeType {
+				Platform::String^ get() {
+					return mime_type_ ? mime_type_ : (mime_type_ = string_from_utf8(src_->mime_type));
+				}
+			}
+
+			property Platform::String^ Description {
+				Platform::String^ get() {
+					return description_ ? description_ : (description_ = string_from_utf8(src_->description));
+				}
+			}
+
+			property opus_uint32 Width {
+				opus_uint32 get() { return src_->width; }
+			}
+
+			property opus_uint32 Height {
+				opus_uint32 get() { return src_->height; }
+			}
+
+			property opus_uint32 Depth {
+				opus_uint32 get() { return src_->depth; }
+			}
+
+			property opus_uint32 Colors {
+				opus_uint32 get() { return src_->colors; }
+			}
+
+			property Platform::Array<uint8>^ Data {
+				Platform::Array<uint8>^ get() {
+					return data_ ? data_ : (data_ = Platform::ArrayReference<uint8>(src_->data, src_->data_length));
+				}
+			}
+
+			property OpusPictureFormat Format {
+				OpusPictureFormat get() { return (OpusPictureFormat)src_->format; }
+			}
+
+		private:
+			OpusPictureTag() {
+				src_ = new ::OpusPictureTag();
+				::opus_picture_tag_init(src_);
+			}
+
+			::OpusPictureTag *src_;
+
+			Platform::String^ mime_type_;
+			Platform::String^ description_;
+			Platform::Array<uint8>^ data_;
 		};
 
 
@@ -166,6 +271,7 @@ namespace Opusfile {
 			void SetGainOffset(GainType gainType, opus_int32 gainOffsetQ8);
 			void SetDitherEnabled(bool enabled);
 			Windows::Storage::Streams::IBuffer^ Read(int bufSize);
+			[Windows::Foundation::Metadata::DefaultOverloadAttribute]
 			Windows::Storage::Streams::IBuffer^ Read(int bufSize, int *li);
 			Windows::Storage::Streams::IBuffer^ ReadStereo(int bufSize);
 

@@ -75,7 +75,7 @@ namespace Opusfile {
 			};
 
 			int error = 0;
-			of_ = ::op_open_callbacks((void *)this, &cb, const_cast<const uint8 *>(initial_data), initial_size, &error);
+			of_ = ::op_open_callbacks((void *)this, &cb, initial_data, initial_size, &error);
 
 			if (0 != error) {
 				Free();
@@ -361,6 +361,26 @@ namespace Opusfile {
 			delete instance->file_reader_;
 			instance->file_reader_ = nullptr;
 			return 0;
+		}
+
+
+		Platform::Array<OpusPictureTag^>^ OpusPictureTag::Parse(OpusTags^ opusTags)
+		{
+			std::vector<OpusPictureTag^> pics;
+			int i = 0;
+
+			while (true) {
+				char *comment = opusTags->GetComment(i++);
+				if (nullptr == comment) break;
+				if (0 != opus_tagncompare("METADATA_BLOCK_PICTURE", 22, comment)) continue;
+
+				OpusPictureTag^ pic = ref new OpusPictureTag();
+				int ret = ::opus_picture_tag_parse(pic->src_, comment);
+				if (OP_EFAULT == ret) ref new Platform::OutOfMemoryException();
+				if (0 == ret) pics.push_back(pic);
+			}
+
+			return Platform::ArrayReference<OpusPictureTag^>(pics.data(), pics.size());
 		}
 
 	}
