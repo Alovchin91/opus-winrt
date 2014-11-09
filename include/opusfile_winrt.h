@@ -278,15 +278,16 @@ namespace Opusfile {
 			void RawSeek(opus_int64 byteOffset);
 			void PcmSeek(ogg_int64_t pcmOffset);
 
+		internal:
+			static int read_func(void *stream, unsigned char *ptr, int nbytes);
+			static int seek_func(void *stream, opus_int64 offset, int whence);
+			static opus_int64 tell_func(void *stream);
+			static int close_func(void *stream);
+
 		private:
 			::OggOpusFile *of_;
 			Windows::Storage::Streams::IRandomAccessStream^ file_stream_;
 			Windows::Storage::Streams::DataReader^ file_reader_;
-
-			static int read_func_(void *stream, unsigned char *ptr, int nbytes);
-			static int seek_func_(void *stream, opus_int64 offset, int whence);
-			static opus_int64 tell_func_(void *stream);
-			static int close_func_(void *stream);
 		};
 
 	}

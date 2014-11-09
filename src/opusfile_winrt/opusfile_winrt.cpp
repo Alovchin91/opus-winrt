@@ -35,6 +35,14 @@ namespace Opusfile {
 
 	namespace WindowsRuntime {
 
+		const ::OpusFileCallbacks op_winrt_callbacks = {
+			&OggOpusFile::read_func,
+			&OggOpusFile::seek_func,
+			&OggOpusFile::tell_func,
+			&OggOpusFile::close_func
+		};
+
+
 		OggOpusFile::OggOpusFile()
 			: of_(nullptr), file_stream_(nullptr), file_reader_(nullptr)
 		{
@@ -67,15 +75,8 @@ namespace Opusfile {
 				initial_size = initial->Length;
 			}
 
-			::OpusFileCallbacks cb = {
-				read_func_,
-				seek_func_,
-				tell_func_,
-				close_func_
-			};
-
 			int error = 0;
-			of_ = ::op_open_callbacks((void *)this, &cb, initial_data, initial_size, &error);
+			of_ = ::op_open_callbacks((void *)this, &op_winrt_callbacks, initial_data, initial_size, &error);
 
 			if (0 != error) {
 				Free();
@@ -312,10 +313,10 @@ namespace Opusfile {
 		}
 
 
-		int OggOpusFile::read_func_(void *stream, unsigned char *ptr, int nbytes)
+		int OggOpusFile::read_func(void *stream, unsigned char *ptr, int nbytes)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(nullptr != instance && instance->IsValid);
+			assert(instance && instance->file_reader_);
 			if (nbytes > 0) {
 				unsigned count = concurrency::create_task(instance->file_reader_->LoadAsync(nbytes)).get();
 				if (count > 0) {
@@ -326,10 +327,10 @@ namespace Opusfile {
 			return 0;
 		}
 
-		int OggOpusFile::seek_func_(void *stream, opus_int64 offset, int whence)
+		int OggOpusFile::seek_func(void *stream, opus_int64 offset, int whence)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(nullptr != instance && instance->IsValid);
+			assert(instance && instance->file_stream_);
 			switch (whence) {
 			case SEEK_CUR:
 				instance->file_stream_->Seek(instance->file_stream_->Position + (uint64)offset);
@@ -346,17 +347,17 @@ namespace Opusfile {
 			return 0;
 		}
 
-		opus_int64 OggOpusFile::tell_func_(void *stream)
+		opus_int64 OggOpusFile::tell_func(void *stream)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(nullptr != instance && instance->IsValid);
+			assert(instance && instance->file_stream_);
 			return (long)instance->file_stream_->Position;
 		}
 
-		int OggOpusFile::close_func_(void *stream)
+		int OggOpusFile::close_func(void *stream)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(nullptr != instance && instance->IsValid);
+			assert(instance && instance->file_reader_);
 			(void)instance->file_reader_->DetachStream();
 			delete instance->file_reader_;
 			instance->file_reader_ = nullptr;
