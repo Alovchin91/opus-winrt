@@ -1,5 +1,5 @@
 /* opusfile_winrt - Opus Codec for Windows Runtime
- * Copyright (C) 2014  Alexander Ovchinnikov
+ * Copyright (C) 2014-2015  Alexander Ovchinnikov
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -254,8 +254,8 @@ namespace Opusfile {
 		{
 			assert(IsValid);
 
-			std::unique_ptr<opus_int16[]> pcm = std::make_unique<opus_int16[]>(bufSize);
-			int ret = ::op_read(of_, pcm.get(), bufSize, li);
+			std::vector<opus_int16> pcm(bufSize);
+			int ret = ::op_read(of_, &pcm.front(), bufSize, li);
 
 			if (ret < 0) {
 				if (OP_EFAULT == ret) throw ref new Platform::FailureException();
@@ -267,15 +267,15 @@ namespace Opusfile {
 
 			int channels = ::op_channel_count(of_, li != NULL ? *li : -1);
 
-			return pack_sample(pcm.get(), ret * channels);
+			return pack_sample(&pcm.front(), ret * channels);
 		}
 
 		Windows::Storage::Streams::IBuffer^ OggOpusFile::ReadStereo(int bufSize)
 		{
 			assert(IsValid);
 
-			std::unique_ptr<opus_int16[]> pcm = std::make_unique<opus_int16[]>(bufSize);
-			int ret = ::op_read_stereo(of_, pcm.get(), bufSize);
+			std::vector<opus_int16> pcm(bufSize);
+			int ret = ::op_read_stereo(of_, &pcm.front(), bufSize);
 
 			if (ret < 0) {
 				if (OP_EFAULT == ret) throw ref new Platform::FailureException();
@@ -287,7 +287,7 @@ namespace Opusfile {
 
 			const int channels = 2; // Since the decoded data is stereo
 
-			return pack_sample(pcm.get(), ret * channels);
+			return pack_sample(&pcm.front(), ret * channels);
 		}
 
 		void OggOpusFile::RawSeek(opus_int64 byteOffset)

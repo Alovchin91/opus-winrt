@@ -13,12 +13,18 @@
       <UniqueIdentifier>{329f4a2d-b16b-404d-a5ab-13b1e1b34796}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Public Header Files">
+      <UniqueIdentifier>{97e6ca69-20d7-4626-a1c8-241dd1a61a4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\opusfile_winrt.h">
-      <Filter>Header Files</Filter>
+      <Filter>Public Header Files</Filter>
     </ClInclude>
     <ClInclude Include="internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,5 +32,10 @@
     <ClCompile Include="opusfile_winrt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
