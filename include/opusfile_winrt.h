@@ -244,9 +244,6 @@ namespace Opusfile {
 			void Open(Windows::Storage::Streams::IRandomAccessStream^ fileStream, Windows::Storage::Streams::IBuffer^ initial);
 			void Free();
 
-			//static OggOpusFile^ TestOpen(Windows::Storage::Streams::IRandomAccessStream^ fileStream);
-			//static OggOpusFile^ TestOpen(Windows::Storage::Streams::IRandomAccessStream^ fileStream, Windows::Storage::Streams::IBuffer^ initial);
-
 			bool Seekable();
 			int LinkCount();
 			opus_uint32 Serialno();

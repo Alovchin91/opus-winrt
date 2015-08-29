@@ -110,19 +110,15 @@ namespace Opusfile {
 			file_stream_ = nullptr;
 		}
 
-		//static OggOpusFile^ OggOpusFile::TestOpen(Windows::Storage::Streams::IRandomAccessStream^ fileStream);
-
-		//static OggOpusFile^ OggOpusFile::TestOpen(Windows::Storage::Streams::IRandomAccessStream^ fileStream, Windows::Storage::Streams::IBuffer^ initial);
-
 		bool OggOpusFile::Seekable()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return !!(::op_seekable(of_));
 		}
 
 		int OggOpusFile::LinkCount()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_link_count(of_);
 		}
 
@@ -133,7 +129,7 @@ namespace Opusfile {
 
 		opus_uint32 OggOpusFile::Serialno(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_serialno(of_, li);
 		}
 
@@ -144,7 +140,7 @@ namespace Opusfile {
 
 		int OggOpusFile::ChannelCount(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_channel_count(of_, li);
 		}
 
@@ -155,7 +151,7 @@ namespace Opusfile {
 
 		opus_int64 OggOpusFile::RawTotal(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_raw_total(of_, li);
 		}
 
@@ -166,7 +162,7 @@ namespace Opusfile {
 
 		ogg_int64_t OggOpusFile::PcmTotal(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_pcm_total(of_, li);
 		}
 
@@ -177,7 +173,7 @@ namespace Opusfile {
 
 		OpusHead^ OggOpusFile::Head(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			const ::OpusHead *head = ::op_head(of_, li);
 			return ref new OpusHead(head);
 		}
@@ -189,14 +185,14 @@ namespace Opusfile {
 
 		OpusTags^ OggOpusFile::Tags(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			const ::OpusTags *tags = ::op_tags(of_, li);
 			return ref new OpusTags(tags);
 		}
 
 		int OggOpusFile::CurrentLink()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_current_link(of_);
 		}
 
@@ -207,41 +203,42 @@ namespace Opusfile {
 
 		opus_int32 OggOpusFile::Bitrate(int li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_bitrate(of_, li);
 		}
 
 		opus_int32 OggOpusFile::BitrateInstant()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_bitrate_instant(of_);
 		}
 
 		opus_int64 OggOpusFile::RawTell()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_raw_tell(of_);
 		}
 
 		ogg_int64_t OggOpusFile::PcmTell()
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			return ::op_pcm_tell(of_);
 		}
 
 		void OggOpusFile::SetGainOffset(GainType gainType, opus_int32 gainOffsetQ8)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			int ret = ::op_set_gain_offset(of_, (int)gainType, gainOffsetQ8);
 			if (ret < 0) {
-				if (OP_EINVAL == ret) throw ref new Platform::InvalidArgumentException("gainType");
+				if (OP_EINVAL == ret)
+					throw ref new Platform::InvalidArgumentException("gainType");
 				throw ref new Platform::COMException(ret);
 			}
 		}
 
 		void OggOpusFile::SetDitherEnabled(bool enabled)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 			::op_set_dither_enabled(of_, enabled ? TRUE : FALSE);
 		}
 
@@ -252,14 +249,16 @@ namespace Opusfile {
 
 		Windows::Storage::Streams::IBuffer^ OggOpusFile::Read(int bufSize, int *li)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 
 			std::vector<opus_int16> pcm(bufSize);
 			int ret = ::op_read(of_, &pcm.front(), bufSize, li);
 
 			if (ret < 0) {
-				if (OP_EFAULT == ret) throw ref new Platform::FailureException();
-				if (OP_EIMPL == ret) throw ref new Platform::NotImplementedException();
+				if (OP_EFAULT == ret)
+					throw ref new Platform::FailureException();
+				if (OP_EIMPL == ret)
+					throw ref new Platform::NotImplementedException();
 				throw ref new Platform::COMException(ret);
 			}
 			if (0 == ret)
@@ -272,14 +271,16 @@ namespace Opusfile {
 
 		Windows::Storage::Streams::IBuffer^ OggOpusFile::ReadStereo(int bufSize)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 
 			std::vector<opus_int16> pcm(bufSize);
 			int ret = ::op_read_stereo(of_, &pcm.front(), bufSize);
 
 			if (ret < 0) {
-				if (OP_EFAULT == ret) throw ref new Platform::FailureException();
-				if (OP_EIMPL == ret) throw ref new Platform::NotImplementedException();
+				if (OP_EFAULT == ret)
+					throw ref new Platform::FailureException();
+				if (OP_EIMPL == ret)
+					throw ref new Platform::NotImplementedException();
 				throw ref new Platform::COMException(ret);
 			}
 			if (0 == ret)
@@ -292,22 +293,24 @@ namespace Opusfile {
 
 		void OggOpusFile::RawSeek(opus_int64 byteOffset)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 
 			int ret = ::op_raw_seek(of_, byteOffset);
 			if (0 != ret) {
-				if (OP_EINVAL == ret) throw ref new Platform::InvalidArgumentException();
+				if (OP_EINVAL == ret)
+					throw ref new Platform::InvalidArgumentException();
 				throw ref new Platform::COMException(ret);
 			}
 		}
 
 		void OggOpusFile::PcmSeek(ogg_int64_t pcmOffset)
 		{
-			assert(IsValid);
+			_ASSERTE(IsValid);
 
 			int ret = ::op_pcm_seek(of_, pcmOffset);
 			if (0 != ret) {
-				if (OP_EINVAL == ret) throw ref new Platform::InvalidArgumentException();
+				if (OP_EINVAL == ret)
+					throw ref new Platform::InvalidArgumentException();
 				throw ref new Platform::COMException(ret);
 			}
 		}
@@ -316,7 +319,7 @@ namespace Opusfile {
 		int OggOpusFile::read_func(void *stream, unsigned char *ptr, int nbytes)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(instance && instance->file_reader_);
+			_ASSERTE(instance && instance->file_reader_);
 			if (nbytes > 0) {
 				unsigned count = perform_synchronously(instance->file_reader_->LoadAsync(nbytes));
 				if (count > 0) {
@@ -330,7 +333,7 @@ namespace Opusfile {
 		int OggOpusFile::seek_func(void *stream, opus_int64 offset, int whence)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(instance && instance->file_stream_);
+			_ASSERTE(instance && instance->file_stream_);
 			switch (whence) {
 			case SEEK_CUR:
 				instance->file_stream_->Seek(instance->file_stream_->Position + (uint64)offset);
@@ -350,14 +353,14 @@ namespace Opusfile {
 		opus_int64 OggOpusFile::tell_func(void *stream)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(instance && instance->file_stream_);
+			_ASSERTE(instance && instance->file_stream_);
 			return (long)instance->file_stream_->Position;
 		}
 
 		int OggOpusFile::close_func(void *stream)
 		{
 			OggOpusFile^ instance = reinterpret_cast<OggOpusFile^>(stream);
-			assert(instance && instance->file_reader_);
+			_ASSERTE(instance && instance->file_reader_);
 			(void)instance->file_reader_->DetachStream();
 			delete instance->file_reader_;
 			instance->file_reader_ = nullptr;
@@ -377,7 +380,8 @@ namespace Opusfile {
 
 				OpusPictureTag^ pic = ref new OpusPictureTag();
 				int ret = ::opus_picture_tag_parse(pic->src_, comment);
-				if (OP_EFAULT == ret) ref new Platform::OutOfMemoryException();
+				if (OP_EFAULT == ret)
+					throw ref new Platform::OutOfMemoryException();
 				if (0 == ret) pics.push_back(pic);
 			}
 

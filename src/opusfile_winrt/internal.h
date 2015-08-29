@@ -33,6 +33,7 @@
 # define _opusfile_winrt_internal_h (1)
 
 #include <robuffer.h>
+#include <concrt.h>
 #include <ppltasks.h>
 #include <windows.storage.streams.h>
 
