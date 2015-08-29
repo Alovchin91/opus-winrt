@@ -38,4 +38,4 @@ public IBuffer GetSample(int length)
 
 **opus-winrt** includes all the necessary source code to build the libraries. Opus Codec for Windows Runtime solution includes original Opus libraries and their dependencies, including [libogg](http://downloads.xiph.org/releases/ogg/), and contains *opusfile_winrt* project that is the main output of the solution.
 
-You will need Visual Studio 2015 or higher to build the library for Windows 10 or higher. Also, if you want to build the solution for Windows (Phone) 8.1, you will need to make some changes to the project files. The easiest way to go with Windows (Phone) 8.1 is to take the source code from [this tag](/tree/v1.0_win8.1).
+You will need Visual Studio 2015 or higher to build the library for Windows 10 or higher. Also, if you want to build the solution for Windows (Phone) 8.1, you will need to make some changes to the project files. The easiest way to go with Windows (Phone) 8.1 is to take the source code from [this tag](opus-winrt/tree/v1.0_win8.1).
