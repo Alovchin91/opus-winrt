@@ -44,13 +44,11 @@
 static
 uint8 *get_array(Windows::Storage::Streams::IBuffer^ buffer)
 {
-	using Microsoft::WRL::ComPtr;
-
 	HRESULT hr = S_OK;
 	uint8 *pBytes = nullptr;
 
-	ComPtr<Windows::Storage::Streams::IBufferByteAccess> spBuffAccess;
-	ComPtr<ABI::Windows::Storage::Streams::IBuffer> spBuff = reinterpret_cast<ABI::Windows::Storage::Streams::IBuffer*>(buffer);
+	Microsoft::WRL::ComPtr<Windows::Storage::Streams::IBufferByteAccess> spBuffAccess;
+	Microsoft::WRL::ComPtr<ABI::Windows::Storage::Streams::IBuffer> spBuff = reinterpret_cast<ABI::Windows::Storage::Streams::IBuffer*>(buffer);
 
 	THROW_IF_FAILED(spBuff.As(&spBuffAccess));
 	THROW_IF_FAILED(spBuffAccess->Buffer(&pBytes));
@@ -65,13 +63,13 @@ Platform::String^ string_from_utf8(const char *str, int len = -1)
 {
 	if (!str) return nullptr;
 
-	int wlen = MultiByteToWideChar(CP_ACP, 0, str, len, NULL, 0);
+	int wlen = MultiByteToWideChar(CP_UTF8, 0, str, len, NULL, 0);
 	if (0 == wlen) {
 		throw ref new Platform::InvalidArgumentException();
 	}
 
 	wchar_t *widestr = new wchar_t[wlen];
-	if (MultiByteToWideChar(CP_ACP, 0, str, len, widestr, wlen) == 0) {
+	if (0 == MultiByteToWideChar(CP_UTF8, 0, str, len, widestr, wlen)) {
 		delete[] widestr;
 		throw ref new Platform::InvalidArgumentException();
 	}
