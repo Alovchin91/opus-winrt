@@ -75,6 +75,12 @@
     <ClInclude Include="typedef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="x86\main_sse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="x86\SigProc_FIX_sse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="A2NLSF.c">
@@ -303,6 +309,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VQ_WMat_EC.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\NSQ_del_dec_sse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\NSQ_sse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\VAD_sse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\VQ_WMat_EC_sse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="x86\x86_silk_map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
